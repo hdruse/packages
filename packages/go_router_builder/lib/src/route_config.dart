@@ -685,18 +685,23 @@ abstract class RouteBaseConfig {
   }
 
   /// Generates all of the members that correspond to `this`.
-  InfoIterable generateMembers() => InfoIterable._(
-        members: _generateMembers().toList(),
+  InfoIterable generateMembers({Set<String>? generatedNames}) => InfoIterable._(
+        members: _generateMembers(generatedNames ?? <String>{}).toList(),
         routeGetterName: _routeGetterName,
       );
 
-  Iterable<String> _generateMembers() sync* {
-    final List<String> items = <String>[
-      _rootDefinition(),
-    ];
+  Iterable<String> _generateMembers(Set<String> generatedNames) sync* {
+    final List<String> items = <String>[];
+
+    // Nur generieren, wenn noch nicht generiert
+    if (generatedNames.add(_className)) {
+      items.addAll(classDeclarations());
+    }
 
     for (final RouteBaseConfig def in _flatten()) {
-      items.addAll(def.classDeclarations());
+      if (generatedNames.add(def._className)) {
+        items.addAll(def.classDeclarations());
+      }
     }
 
     yield* items;
