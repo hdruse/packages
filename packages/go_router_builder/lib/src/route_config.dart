@@ -684,37 +684,61 @@ abstract class RouteBaseConfig {
     return null;
   }
 
-  /// Generates all of the members that correspond to `this`.
-  InfoIterable generateMembers({Set<String>? generatedNames}) => InfoIterable._(
-        members: _generateMembers(generatedNames ?? <String>{}).toList(),
-        routeGetterName: _routeGetterName,
-      );
+  /// Liefert einen eindeutigen Schlüssel für die Generierung (Name + Typ).
+  String get _uniqueKey =>
+      '${_className}_${routeDataClass.thisType.getDisplayString(withNullability: false)}';
 
-  Iterable<String> _generateMembers(Set<String> generatedNames) sync* {
-    final List<String> items = <String>[];
+  /// Generiert alle notwendigen Deklarationen: Klassen/Mixins (nur einmal pro Typ) und Getter/Factories (immer pro Instanz).
+  InfoIterable generateMembers({Set<String>? generatedKeys}) {
+    final Set<String> classKeys = generatedKeys ?? <String>{};
+    final List<String> members = [];
 
-    // Nur generieren, wenn noch nicht generiert
-    if (generatedNames.add(_className)) {
-      items.addAll(classDeclarations());
-    }
-
-    for (final RouteBaseConfig def in _flatten()) {
-      if (generatedNames.add(def._className)) {
-        items.addAll(def.classDeclarations());
+    // Klassen/Mixins nur einmal pro Typ generieren
+    for (final RouteBaseConfig def in _flatten().toSet()) {
+      if (classKeys.add(def._uniqueKey)) {
+        members.addAll(def.classDeclarations());
       }
     }
 
-    yield* items;
+    // Eindeutige Getter-Namen pro Instanz (auch bei mehrfacher Nutzung)
+    final Map<String, int> typeInstanceCounter = {};
+    for (final RouteBaseConfig def in _flatten().toList()) {
+      final String type = def._className;
+      final int count = (typeInstanceCounter[type] ?? 0) + 1;
+      typeInstanceCounter[type] = count;
+      final String getterName = count == 1
+          ? r'$' + type.substring(0, 1).toLowerCase() + type.substring(1)
+          : r'$' +
+              type.substring(0, 1).toLowerCase() +
+              type.substring(1) +
+              count.toString();
+      members.add(def._rootDefinitionWithCustomGetter(getterName));
+    }
 
-    yield* items
-        .expand(
-          (String e) => helperNames.entries
-              .where(
-                  (MapEntry<String, String> element) => e.contains(element.key))
-              .map((MapEntry<String, String> e) => e.value),
-        )
-        .toSet();
+    // Helper nur einmal
+    members.addAll(members
+        .expand((String e) => helperNames.entries
+            .where(
+                (MapEntry<String, String> element) => e.contains(element.key))
+            .map((MapEntry<String, String> e) => e.value))
+        .toSet());
+
+    // Der erste Getter-Name (für die Top-Level-Route) bleibt als routeGetterName erhalten
+    final String firstGetterName = members
+            .where((e) => e.startsWith('RouteBase get'))
+            .map((e) => e.substring('RouteBase get '.length, e.indexOf(' =>')))
+            .firstOrNull ??
+        _routeGetterName;
+
+    return InfoIterable._(
+      members: members,
+      routeGetterName: firstGetterName,
+    );
   }
+
+  String _rootDefinitionWithCustomGetter(String getterName) => '''
+RouteBase get $getterName => ${_invokesRouteConstructor()};
+''';
 
   /// Returns this [GoRouteConfig] and all child [GoRouteConfig] instances.
   Iterable<RouteBaseConfig> _flatten() sync* {
