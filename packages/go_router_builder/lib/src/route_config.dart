@@ -727,11 +727,13 @@ abstract class RouteBaseConfig {
 RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
 ''';
 
-  String get _className => routeDataClass.name;
+  String get _parentClassName => parent == null ? '' : parent!._className;
 
-  String get _mixinName => '_\$$_className';
+  String get _className => '$_parentClassName${routeDataClass.name}';
 
-  String get _extensionName => '\$${_className}Extension';
+  String get _mixinName => '_\$$_parentClassName$_className';
+
+  String get _extensionName => '\$$_parentClassName${_className}Extension';
 
   String _invokesRouteConstructor() {
     final String routesBit = _children.isEmpty
