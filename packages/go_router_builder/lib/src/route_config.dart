@@ -416,20 +416,25 @@ class GoRouteConfig extends RouteBaseConfig {
 mixin $_mixinName on GoRouteData {
   static $_className _fromState(GoRouterState state) $_fromStateConstructor
   $_castedSelf
-  String get _location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
-
-  void go$_classNameWithParent(BuildContext context) =>
-    context.go(_location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-      
-  Future<T?> push$_classNameWithParent<T>(BuildContext context) =>
-     context.push<T>(_location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-     
-  void pushReplacement$_classNameWithParent(BuildContext context) =>
-      context.pushReplacement(_location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-
-  void replace$_classNameWithParent(BuildContext context) =>
-      context.replace(_location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-}
+  
+   @override
+  String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
+  
+  @override
+  void go(BuildContext context) =>
+      context.go(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+  
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+  
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+  
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
 ''';
   }
 
@@ -722,26 +727,11 @@ abstract class RouteBaseConfig {
 RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
 ''';
 
-  String get _parentClassName {
-    if (parent == null) {
-      return '';
-    }
-
-    if (parent is GoRouteConfig) {
-      final String withoutRoute = parent!._className.replaceAll('Route', '');
-      return (parent?._parentClassName ?? '') + withoutRoute;
-    }
-
-    return '';
-  }
-
   String get _className => routeDataClass.name;
 
-  String get _classNameWithParent => '$_parentClassName$_className';
+  String get _mixinName => '_\$$_className';
 
-  String get _mixinName => '_\$$_classNameWithParent';
-
-  String get _extensionName => '\$${_classNameWithParent}Extension';
+  String get _extensionName => '\$${_className}Extension';
 
   String _invokesRouteConstructor() {
     final String routesBit = _children.isEmpty

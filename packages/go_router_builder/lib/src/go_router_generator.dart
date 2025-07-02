@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
+import 'package:collection/collection.dart';
 import 'package:source_gen/source_gen.dart';
 
 import 'route_config.dart';
@@ -61,6 +62,18 @@ ${getters.map((String e) => "$e,").join('\n')}
     Set<String> values,
     Set<String> getters,
   ) {
+    // collect all annotated elements in the library
+    final List<AnnotatedElement> annotatedElements =
+        library.annotatedWith(_typeChecker).toList();
+
+    final Map<String?, List<AnnotatedElement>> groupedAnnotatedElements =
+        annotatedElements.groupListsBy((AnnotatedElement e) => e.element.name);
+
+    groupedAnnotatedElements.entries
+        .forEach((MapEntry<String?, List<AnnotatedElement>> entry) {
+      print('Found ${entry.value.length} elements with name "${entry.key}"');
+    });
+
     for (final AnnotatedElement annotatedElement
         in library.annotatedWith(_typeChecker)) {
       final InfoIterable generatedValue = _generateForAnnotatedElement(
