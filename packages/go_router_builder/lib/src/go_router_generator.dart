@@ -106,6 +106,6 @@ ${getters.map((String e) => "$e,").join('\n')}
     }
 
     return RouteBaseConfig.fromAnnotation(annotation, element)
-        .generateMembers(generatedKeys: generatedNames);
+        .generateMembers(generatedNames: generatedNames);
   }
 }
