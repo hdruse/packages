@@ -744,9 +744,9 @@ RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
 
   String get _classNameWithParent => '$_parentClassName$_className';
 
-  String get _mixinName => '_\$$_classNameWithParent$_className';
+  String get _mixinName => '_\$$_classNameWithParent';
 
-  String get _extensionName => '\$$_classNameWithParent${_className}Extension';
+  String get _extensionName => '\$${_classNameWithParent}Extension';
 
   String _invokesRouteConstructor() {
     final String routesBit = _children.isEmpty
