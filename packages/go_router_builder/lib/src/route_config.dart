@@ -734,7 +734,7 @@ RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
 
     //check if parent is a TypedGoRoute
     if (parent is GoRouteConfig) {
-      return parent!._className;
+      return parent!._className.replaceAll('Route', '');
     }
 
     return '';
@@ -742,9 +742,11 @@ RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
 
   String get _className => routeDataClass.name;
 
-  String get _mixinName => '_\$$_parentClassName$_className';
+  String get _classNameWithParent => '$_parentClassName$_className';
 
-  String get _extensionName => '\$$_parentClassName${_className}Extension';
+  String get _mixinName => '_\$$_classNameWithParent$_className';
+
+  String get _extensionName => '\$$_classNameWithParent${_className}Extension';
 
   String _invokesRouteConstructor() {
     final String routesBit = _children.isEmpty
