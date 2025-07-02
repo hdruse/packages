@@ -434,6 +434,18 @@ mixin $_mixinName on GoRouteData {
   @override
   void replace(BuildContext context) =>
       context.replace(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+
+  void go$_classNameWithParent(BuildContext context) =>
+    context.go(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+      
+  Future<T?> push$_classNameWithParent<T>(BuildContext context) =>
+     context.push<T>(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+     
+  void pushReplacement$_classNameWithParent(BuildContext context) =>
+      context.pushReplacement(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+
+  void replace$_classNameWithParent(BuildContext context) =>
+      context.replace(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
 }
 ''';
   }
