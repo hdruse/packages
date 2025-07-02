@@ -732,9 +732,9 @@ RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
       return '';
     }
 
-    //check if parent is a TypedGoRoute
     if (parent is GoRouteConfig) {
-      return parent!._className.replaceAll('Route', '');
+      final String withoutRoute = parent!._className.replaceAll('Route', '');
+      return (parent?._parentClassName ?? '') + withoutRoute;
     }
 
     return '';
