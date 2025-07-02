@@ -416,36 +416,19 @@ class GoRouteConfig extends RouteBaseConfig {
 mixin $_mixinName on GoRouteData {
   static $_className _fromState(GoRouterState state) $_fromStateConstructor
   $_castedSelf
-  @override
-  String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
-  
-  @override
-  void go(BuildContext context) =>
-      context.go(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-  
-  @override
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-  
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-  
-  @override
-  void replace(BuildContext context) =>
-      context.replace(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+  String get _location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
 
   void go$_classNameWithParent(BuildContext context) =>
-    context.go(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+    context.go(_location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
       
   Future<T?> push$_classNameWithParent<T>(BuildContext context) =>
-     context.push<T>(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+     context.push<T>(_location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
      
   void pushReplacement$_classNameWithParent(BuildContext context) =>
-      context.pushReplacement(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+      context.pushReplacement(_location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
 
   void replace$_classNameWithParent(BuildContext context) =>
-      context.replace(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+      context.replace(_location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
 }
 ''';
   }
