@@ -727,7 +727,8 @@ abstract class RouteBaseConfig {
 RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
 ''';
 
-  String get _parentClassName => parent == null ? 'Foobar' : parent!._className;
+  String get _parentClassName =>
+      parent == null ? '' : parent?.routeDataClass.name ?? '';
 
   String get _className => '$_parentClassName${routeDataClass.name}';
 
