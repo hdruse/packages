@@ -61,11 +61,13 @@ ${getters.map((String e) => "$e,").join('\n')}
     Set<String> values,
     Set<String> getters,
   ) {
+    final Set<String> generatedNames = <String>{};
     for (final AnnotatedElement annotatedElement
         in library.annotatedWith(_typeChecker)) {
       final InfoIterable generatedValue = _generateForAnnotatedElement(
         annotatedElement.element,
         annotatedElement.annotation,
+        generatedNames,
       );
       getters.add(generatedValue.routeGetterName);
       for (final String value in generatedValue) {
@@ -78,6 +80,7 @@ ${getters.map((String e) => "$e,").join('\n')}
   InfoIterable _generateForAnnotatedElement(
     Element element,
     ConstantReader annotation,
+    Set<String> generatedNames,
   ) {
     final String typedAnnotation =
         withoutNullability(annotation.objectValue.type!.getDisplayString());
@@ -103,6 +106,6 @@ ${getters.map((String e) => "$e,").join('\n')}
     }
 
     return RouteBaseConfig.fromAnnotation(annotation, element)
-        .generateMembers();
+        .generateMembers(generatedKeys: generatedNames);
   }
 }
